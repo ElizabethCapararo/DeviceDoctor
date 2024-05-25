@@ -45,9 +45,9 @@
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
           "dependencies": {
-            "EntityFramework": {
+            "AutoMapper": {
               "target": "Package",
-              "version": "[6.4.4, )"
+              "version": "[13.0.1, )"
             },
             "FontAwesome.WPF": {
               "target": "Package",
@@ -92,6 +92,10 @@
             "Microsoft.Toolkit.Mvvm": {
               "target": "Package",
               "version": "[7.1.2, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
             },
             "System.Windows.Interactivity.WPF": {
               "target": "Package",

@@ -1,7 +1,9 @@
-﻿namespace DeviceDoctorTerminalSystem.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DeviceDoctorTerminalSystem.Models
 {
-    public class Device
-    {
+    public record Device
+    {        
         public string SerialNumber { get; init; } = string.Empty;
         public string Model { get; init; } = string.Empty;
         public string Manufacturer { get; init; } = string.Empty;

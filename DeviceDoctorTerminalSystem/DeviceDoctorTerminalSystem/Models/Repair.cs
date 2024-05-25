@@ -1,36 +1,48 @@
 ﻿using DeviceDoctorTerminalSystem.Enumerations;
+using DeviceDoctorTerminalSystem.Utilities;
+using System.Data;
 
 namespace DeviceDoctorTerminalSystem.Models
 {
-    public class Repair
+    public record Repair
     {
         public Guid Id { get; init; } = Guid.NewGuid();
-        public required Customer Customer { get; init; }         
-        public required Device Device { get; init; }
-        public string IssueDescription { get; init; } = string.Empty;
+        public Customer Customer { get; init; } = new Customer();
+        public Device Device { get; init; } = new Device();
+        public string IssueDescription { get; set; } = string.Empty;
         public Status Status { get; private set; } = Status.Triaged;
-        public Dictionary<DateTime, string> Updates { get; set; } = new();
-        public DateTime DateCreated => Updates.FirstOrDefault().Key;
-        public DateTime LastModifiedDate => Updates.LastOrDefault().Key;
-
-        public static Repair Create(
-            Customer customer, 
-            Device device,
-            string issueDescription)
+        public List<string> Updates { get; private set; } = new();
+        public DateTime DateCreated { get; init; } 
+        public DateTime LastModifiedDate { get; private set; }
+        
+        public static Repair Create()
         {
-            return new()
-            {
-                Customer = customer,
-                Device = device,
-                IssueDescription = issueDescription,
-                Updates = new() { { DateTime.Now, "Device Triaged" } }
-            };
+            var repair = new Repair();
+            repair.UpdateState(Status.Triaged);
+            return repair;
+        }      
+
+        public void StartProgress() => UpdateState(Status.InProgress);
+
+        public void Complete() => UpdateState(Status.Completed);
+
+        public void Cancel() => UpdateState(Status.Cancelled);
+
+        public void UpdateLog(string entry)
+        {
+            Updates.Add(FormatLogEntry(entry));
+            RegisterUpdate();
         }
 
-        public void StartProgress() => Status = Status.InProgress;
+        private void UpdateState(Status status)
+        {
+            Status = status;
+            Updates.Add(FormatLogEntry($"Repair {status.Description()}"));
+            RegisterUpdate();
+        }
 
-        public void Complete() => Status = Status.Completed;
+        private void RegisterUpdate() => LastModifiedDate = DateTime.Now;
 
-        public void Cancel() => Status = Status.Cancelled;
+        private static string FormatLogEntry(string entry) => $"{DateTime.Now}: {entry}";
     }
 }

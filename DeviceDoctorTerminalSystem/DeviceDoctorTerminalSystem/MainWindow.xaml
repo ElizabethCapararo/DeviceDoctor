@@ -19,7 +19,7 @@
         <DataTemplate x:Key="RepairActionTemplate">
             <Button Command="{Binding ActionCommand}" Content="{Binding Title}"
                     Height="50" Background="Red" Foreground="White" 
-                    FontSize="16" FontWeight="Bold"/>
+                    FontSize="16" FontWeight="Bold" Margin="0,0,5,20"/>
         </DataTemplate>
     </Window.Resources>
     
@@ -39,17 +39,21 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Column="0" Grid.RowSpan="2">
-            <Image Source="../Assets/DeviceDoctorLogo.jpg" Width="200"/>
-            <ItemsControl ItemsSource="{Binding RepairActions}" ItemTemplate="{StaticResource RepairActionTemplate}"/>
-        </StackPanel>
+        <Grid Grid.Column="0" Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="4*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+            <Image Source="../Assets/DeviceDoctorLogo.jpg" Width="200" Grid.Row="0" VerticalAlignment="Top" />
+            <ItemsControl ItemsSource="{Binding RepairActions}" ItemTemplate="{StaticResource RepairActionTemplate}" Grid.Row="1" />
+        </Grid>
 
-        <DataGrid ItemsSource="{Binding Repairs}"  SelectedValue="{Binding SelectedRepair}"
+        <DataGrid ItemsSource="{Binding Repairs}"  SelectedValue="{Binding SelectedRepair, UpdateSourceTrigger=PropertyChanged}"
                   Grid.Column="1" Grid.Row="0" AutoGenerateColumns="False"
-                  CanUserReorderColumns="False" CanUserResizeColumns="False">
+                  CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Status" Width="*"
-                                    Binding="{Binding Status, Converter={StaticResource DescriptionConverter}}" />
+                                    Binding="{Binding Status, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DescriptionConverter}}" />
                 <DataGridTextColumn Header="Customer"  Width="*"
                                     Binding="{Binding Customer.LastName, 
                     Converter={StaticResource TypographyConverter},
@@ -70,69 +74,53 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <Grid Grid.Column="1" Grid.Row="1" Margin="0,0,10,10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="8*"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0">
-                <Button Content="Save Changes" Margin="5,10" Height="50" />
-                <Button Content="Complete Repair" Margin="5,10" Height="50" />
-                <Button Content="Cancel Repair" Margin="5,10" Height="50"/>
-            </StackPanel>
-            <UniformGrid Columns="3" MinHeight="290" Grid.Column="1">               
-                <GroupBox Header="Repair History">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="4*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <ListBox ItemsSource="{Binding SelectedRepair.Updates}" BorderThickness="0" Grid.Row="0">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock>
-                                        <Run Text="{Binding Key}"/>
-                                        <Run Text="{Binding Value}"/>       
-                                    </TextBlock>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                        <TextBox Grid.Row="1"/>                      
-                    </Grid>                  
-                </GroupBox>
-                <GroupBox Header="Device Details">
-                    <StackPanel>
-                        <TextBlock VerticalAlignment="Center" Text="Serial Number"/>
-                        <TextBox Height="20" Margin="0,0,0,10" Text="{Binding SelectedRepair.Device.SerialNumber}"/>
+        <UniformGrid Columns="3" MinHeight="290" DataContext="{Binding SelectedRepair}"
+                     Grid.Column="1" Grid.Row="1" Margin="0,0,10,10" IsEnabled="{Binding CanUpdateRepair}">
+            <GroupBox Header="Repair History">
+                <Grid HorizontalAlignment="Left" Width="151">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="4*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                        <TextBlock VerticalAlignment="Center" Text="Model"/>
-                        <TextBox Height="20" Margin="0,0,0,10" Text="{Binding SelectedRepair.Device.Model}"/>
+                    <TextBox Grid.Row="1"/>
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Device Details">
+                <StackPanel DataContext="{Binding Device}">
+                    <TextBlock VerticalAlignment="Center" Text="Serial Number"/>
+                    <TextBox Height="20" Margin="0,0,0,10" Text="{Binding SerialNumber, Mode=TwoWay}"/>
 
-                        <TextBlock VerticalAlignment="Center" Text="Manufacturer"/>
-                        <TextBox Height="20" Margin="0,0,0,10" Text="{Binding SelectedRepair.Device.Manufacturer}"/>
+                    <TextBlock VerticalAlignment="Center" Text="Model"/>
+                    <TextBox Height="20" Margin="0,0,0,10" Text="{Binding Model, UpdateSourceTrigger=PropertyChanged}"/>
 
-                        <TextBlock VerticalAlignment="Center" Text="Condition"/>
-                        <TextBox Height="50" Margin="0,0,0,10" Text="{Binding SelectedRepair.Device.Condition}"/>
-                    </StackPanel>
-                </GroupBox>
-                <GroupBox Header="Customer Details">
-                    <StackPanel>
-                        <TextBlock VerticalAlignment="Center" Text="First Name"/>
-                        <TextBox Height="20" Margin="0,0,0,10" Text="{Binding SelectedRepair.Customer.FirstName}"/>
+                    <TextBlock VerticalAlignment="Center" Text="Manufacturer"/>
+                    <TextBox Height="20" Margin="0,0,0,10" Text="{Binding Manufacturer, UpdateSourceTrigger=PropertyChanged}"/>
 
-                        <TextBlock VerticalAlignment="Center" Text="Last Name"/>
-                        <TextBox Height="20" Margin="0,0,0,10" Text="{Binding SelectedRepair.Customer.LastName}"/>
+                    <TextBlock VerticalAlignment="Center" Text="Condition"/>
+                    <TextBox Height="50" Margin="0,0,0,10" Text="{Binding Condition, UpdateSourceTrigger=PropertyChanged}"/>
 
-                        <TextBlock VerticalAlignment="Center" Text="Contact Number"/>
-                        <TextBox Height="20" Margin="0,0,0,10" Text="{Binding SelectedRepair.Customer.ContactNumber}"/>
+                    <TextBlock VerticalAlignment="Center" Text="Issue"/>
+                    <TextBox Height="50" Margin="0,0,0,10" Text="{Binding IssueDescription, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Customer Details" DataContext="{Binding Customer}">
+                <StackPanel>
+                    <TextBlock VerticalAlignment="Center" Text="First Name"/>
+                    <TextBox Height="20" Margin="0,0,0,10" Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock VerticalAlignment="Center" Text="Last Name"/>
+                    <TextBox Height="20" Margin="0,0,0,10" Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock VerticalAlignment="Center" Text="Contact Number"/>
+                    <TextBox Height="20" Margin="0,0,0,10" Text="{Binding ContactNumber, UpdateSourceTrigger=PropertyChanged}"/>
 
 
-                        <TextBlock VerticalAlignment="Center" Text="Notes"/>
-                        <TextBox Height="50" Margin="0,0,0,10" Text="{Binding SelectedRepair.Device.Notes}"/>
-                    </StackPanel>
-                </GroupBox>              
-            </UniformGrid>
-        </Grid>
+                    <TextBlock VerticalAlignment="Center" Text="Notes"/>
+                    <TextBox Height="50" Margin="0,0,0,10" Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+            </GroupBox>
+        </UniformGrid>
        
     </Grid>
 </Window>

@@ -12,17 +12,28 @@ namespace DeviceDoctorTerminalSystem.Services
             context = dbContext;
         }
 
-        public async Task<List<Repair>> GetRepairs()
-        {
-            await Task.CompletedTask;
+        public List<Repair> GetRepairs() => context.All<Repair>().ToList();
 
-            return new List<Repair>()
+        public async Task CompleteRepair(Repair repair) => 
+            await context.UpdateDatabase(() => context.Get<Repair>(r => r.Id == repair.Id).Complete());
+
+        public async Task DeleteRepair(Repair repair) => 
+            await context.UpdateDatabase(() => context.Remove(repair));
+
+        public async void UpdateRepair(Repair repair)
+        {
+            await context.UpdateDatabase(() =>
             {
-                Repair.Create(
-                    Customer.Create("David", "Emery", "0425791172"),
-                    Device.Create("XYZ192M1234", "S4", "Samsung", "Cracked screen"),
-                    "Black screen, no signs of life")
-            };
-        }
+                var existingRepair = context.Get<Repair>(r => r.Id == repair.Id);
+                if (existingRepair == null)
+                {
+                    context.Add(repair);
+                }
+                else
+                {
+                    repair.UpdateLog("Repair details updated");
+                }
+            });
+        }        
     }
 }
