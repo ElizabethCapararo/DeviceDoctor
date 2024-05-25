@@ -178,3 +178,4 @@ C:\Users\Liz\Documents\GitHub\DeviceDoctor\DeviceDoctorTerminalSystem\DeviceDoct
 C:\Users\Liz\Documents\GitHub\DeviceDoctor\DeviceDoctorTerminalSystem\DeviceDoctorTerminalSystem\bin\Debug\net8.0-windows\Microsoft.Expression.Interactions.dll
 C:\Users\Liz\Documents\GitHub\DeviceDoctor\DeviceDoctorTerminalSystem\DeviceDoctorTerminalSystem\bin\Debug\net8.0-windows\System.Windows.Interactivity.dll
 C:\Users\Liz\Documents\GitHub\DeviceDoctor\DeviceDoctorTerminalSystem\DeviceDoctorTerminalSystem\bin\Debug\net8.0-windows\FontAwesome.WPF.dll
+C:\Users\Liz\Documents\GitHub\DeviceDoctor\DeviceDoctorTerminalSystem\DeviceDoctorTerminalSystem\obj\Debug\net8.0-windows\GeneratedInternalTypeHelper.g.cs

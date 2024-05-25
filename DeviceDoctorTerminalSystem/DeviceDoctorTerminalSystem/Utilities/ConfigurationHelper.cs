@@ -25,7 +25,7 @@ namespace DeviceDoctorTerminalSystem.Utilities
         {
             services.AddDbContext<IDocDbContext, DocDbContext>();
 
-            services.AddSingleton<DeviceService>();
+            services.AddSingleton<RepairService>();
         }
 
         private static void ConfigureViewModels(this IServiceCollection services)

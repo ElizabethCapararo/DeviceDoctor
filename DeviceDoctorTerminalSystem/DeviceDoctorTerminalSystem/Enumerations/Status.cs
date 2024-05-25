@@ -4,16 +4,16 @@ namespace DeviceDoctorTerminalSystem.Enumerations
 {
     public enum Status
     {
-        [Description("Triaged")]
+        [Description("TRIAGED")]
         Triaged,
 
-        [Description("In Progress")]
+        [Description("IN PROGRESS")]
         InProgress,
 
-        [Description("Completed")]
+        [Description("COMPLETED")]
         Completed,
 
-        [Description("Cancelled")]
+        [Description("CANCELLED")]
         Cancelled
     }
 }

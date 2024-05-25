@@ -16,6 +16,6 @@ namespace PointOfSaleTerminalSystem.ViewModels
             LoadCommand = new AsyncRelayCommand(OnLoad);
         }
 
-        protected virtual Task OnLoad() => Task.CompletedTask;
+        public virtual Task OnLoad() => Task.CompletedTask;
     }
 }

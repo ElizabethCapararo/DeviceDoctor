@@ -4,31 +4,22 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodels="clr-namespace:DeviceDoctorTerminalSystem.ViewModels"
-        xmlns:enums="clr-namespace:DeviceDoctorTerminalSystem.Enumerations"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-         xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:converters="clr-namespace:DeviceDoctorTerminalSystem.Converters"
+        xmlns:enums="clr-namespace:DeviceDoctorTerminalSystem.Enumerations"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=viewmodels:DeviceDoctorViewModel}"        
         Title="{Binding Title}"
         WindowState="Maximized"
         MinHeight="450" MinWidth="800">
 
-    <Window.Resources>       
-        <DataTemplate x:Key="DeviceItemTemplate">
-            <ContentPresenter>              
-                <ContentPresenter.Content>
-                    <StackPanel Orientation="Horizontal">
-                        <fa:FontAwesome Icon="Pencil" VerticalAlignment="Center" MinWidth="40"/>
-                        <TextBlock Margin="5" HorizontalAlignment="Left" Text="{Binding Customer.LastName}" MaxWidth="100" TextWrapping="NoWrap" FontWeight="Bold" />
-                        <TextBlock Margin="5" HorizontalAlignment="Left" MaxWidth="100" TextWrapping="NoWrap">                    
-                           <Run Text="{Binding Manufacturer}"/>
-                           <Run Text="{Binding Model}"/>
-                        </TextBlock>
-                        <TextBlock Margin="5" HorizontalAlignment="Left" Text="{Binding SerialNumber}" MaxWidth="120" TextWrapping="NoWrap" />
-                        <TextBlock Margin="5" HorizontalAlignment="Left" Text="{Binding IssueDescription}" MaxWidth="200" TextWrapping="NoWrap" />
-                    </StackPanel>
-                </ContentPresenter.Content>
-            </ContentPresenter>
+    <Window.Resources>
+        <converters:TypographyConverter x:Key="TypographyConverter"/>
+        <converters:DescriptionConverter x:Key="DescriptionConverter"/>
+        <DataTemplate x:Key="RepairActionTemplate">
+            <Button Command="{Binding ActionCommand}" Content="{Binding Title}"
+                    Height="50" Background="Red" Foreground="White" 
+                    FontSize="16" FontWeight="Bold"/>
         </DataTemplate>
     </Window.Resources>
     
@@ -41,25 +32,107 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="6*" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <ItemsControl ItemsSource="{Binding DeviceLists}" Grid.Column="0">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <GroupBox Header="{Binding Title}" MinHeight="250">
-                        <ListBox ItemsSource="{Binding Devices}" ItemTemplate="{StaticResource DeviceItemTemplate}" SelectedItem="{Binding SelectedDevice}"/>
-                    </GroupBox>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>     
-       
-
-        <StackPanel Grid.Column="1">
-            <TextBox Text="Search..."/>            
-            <ListView Height="415">
-               
-            </ListView>
+        <StackPanel Grid.Column="0" Grid.RowSpan="2">
+            <Image Source="../Assets/DeviceDoctorLogo.jpg" Width="200"/>
+            <ItemsControl ItemsSource="{Binding RepairActions}" ItemTemplate="{StaticResource RepairActionTemplate}"/>
         </StackPanel>
+
+        <DataGrid ItemsSource="{Binding Repairs}"  SelectedValue="{Binding SelectedRepair}"
+                  Grid.Column="1" Grid.Row="0" AutoGenerateColumns="False"
+                  CanUserReorderColumns="False" CanUserResizeColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Status" Width="*"
+                                    Binding="{Binding Status, Converter={StaticResource DescriptionConverter}}" />
+                <DataGridTextColumn Header="Customer"  Width="*"
+                                    Binding="{Binding Customer.LastName, 
+                    Converter={StaticResource TypographyConverter},
+                    ConverterParameter={x:Static enums:TypographyFormat.Uppercase}}"/>
+                <DataGridTextColumn Header="Created" Binding="{Binding DateCreated}" Width="*"/>
+                <DataGridTextColumn Header="Last Modified" Binding="{Binding LastModifiedDate}" Width="*" />                
+                <DataGridTemplateColumn Header="Device" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                <Run Text="{Binding Device.Manufacturer}"/>
+                                <Run Text="{Binding Device.Model}"/>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="S/N" Binding="{Binding Device.SerialNumber}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Grid Grid.Column="1" Grid.Row="1" Margin="0,0,10,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <Button Content="Save Changes" Margin="5,10" Height="50" />
+                <Button Content="Complete Repair" Margin="5,10" Height="50" />
+                <Button Content="Cancel Repair" Margin="5,10" Height="50"/>
+            </StackPanel>
+            <UniformGrid Columns="3" MinHeight="290" Grid.Column="1">               
+                <GroupBox Header="Repair History">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="4*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <ListBox ItemsSource="{Binding SelectedRepair.Updates}" BorderThickness="0" Grid.Row="0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <Run Text="{Binding Key}"/>
+                                        <Run Text="{Binding Value}"/>       
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <TextBox Grid.Row="1"/>                      
+                    </Grid>                  
+                </GroupBox>
+                <GroupBox Header="Device Details">
+                    <StackPanel>
+                        <TextBlock VerticalAlignment="Center" Text="Serial Number"/>
+                        <TextBox Height="20" Margin="0,0,0,10" Text="{Binding SelectedRepair.Device.SerialNumber}"/>
+
+                        <TextBlock VerticalAlignment="Center" Text="Model"/>
+                        <TextBox Height="20" Margin="0,0,0,10" Text="{Binding SelectedRepair.Device.Model}"/>
+
+                        <TextBlock VerticalAlignment="Center" Text="Manufacturer"/>
+                        <TextBox Height="20" Margin="0,0,0,10" Text="{Binding SelectedRepair.Device.Manufacturer}"/>
+
+                        <TextBlock VerticalAlignment="Center" Text="Condition"/>
+                        <TextBox Height="50" Margin="0,0,0,10" Text="{Binding SelectedRepair.Device.Condition}"/>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Customer Details">
+                    <StackPanel>
+                        <TextBlock VerticalAlignment="Center" Text="First Name"/>
+                        <TextBox Height="20" Margin="0,0,0,10" Text="{Binding SelectedRepair.Customer.FirstName}"/>
+
+                        <TextBlock VerticalAlignment="Center" Text="Last Name"/>
+                        <TextBox Height="20" Margin="0,0,0,10" Text="{Binding SelectedRepair.Customer.LastName}"/>
+
+                        <TextBlock VerticalAlignment="Center" Text="Contact Number"/>
+                        <TextBox Height="20" Margin="0,0,0,10" Text="{Binding SelectedRepair.Customer.ContactNumber}"/>
+
+
+                        <TextBlock VerticalAlignment="Center" Text="Notes"/>
+                        <TextBox Height="50" Margin="0,0,0,10" Text="{Binding SelectedRepair.Device.Notes}"/>
+                    </StackPanel>
+                </GroupBox>              
+            </UniformGrid>
+        </Grid>
+       
     </Grid>
 </Window>

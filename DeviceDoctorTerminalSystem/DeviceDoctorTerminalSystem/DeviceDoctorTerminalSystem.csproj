@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Views\" />
+    <None Remove="Assets\DeviceDoctorLogo.jpg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,10 +34,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\DeviceDoctorLogo.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Configuration\appsettings.json">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>appsettings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\" />
   </ItemGroup>
 
 </Project>

@@ -5,6 +5,6 @@ namespace DeviceDoctorTerminalSystem.Database
 {
     public class DocDbContext : DbContext, IDocDbContext
     {
-        DbSet<Device> Devices { get; set; }
+        DbSet<Repair> Devices { get; set; }
     }
 }

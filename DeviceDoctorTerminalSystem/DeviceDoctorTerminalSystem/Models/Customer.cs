@@ -6,14 +6,16 @@
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string ContactNumber { get; set; }
+        public string Notes { get; set; }
 
-        public static Customer Create(string firstName, string lastName, string contactNumber)
+        public static Customer Create(string firstName, string lastName, string contactNumber, string notes = "")
         {
             return new()
             {
                 FirstName = firstName,
                 LastName = lastName,
-                ContactNumber = contactNumber
+                ContactNumber = contactNumber,
+                Notes = notes
             };
         }
     }

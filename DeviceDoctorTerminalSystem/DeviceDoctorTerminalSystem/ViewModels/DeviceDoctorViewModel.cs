@@ -1,37 +1,38 @@
 ﻿using DeviceDoctorTerminalSystem.Enumerations;
 using DeviceDoctorTerminalSystem.Models;
 using DeviceDoctorTerminalSystem.Services;
-using DeviceDoctorTerminalSystem.Utilities;
-using Microsoft.Toolkit.Mvvm.Input;
 using PointOfSaleTerminalSystem.ViewModels;
-using System;
 using System.Collections.ObjectModel;
-using System.Windows.Input;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace DeviceDoctorTerminalSystem.ViewModels
 {
     public class DeviceDoctorViewModel : ViewModelBase
     {
-        private readonly DeviceService deviceService;
+        private readonly RepairService repairService;
 
-        public ObservableCollection<DeviceListViewModel> DeviceLists { get; } = new();       
-
-        public DeviceDoctorViewModel(DeviceService service) : base("Device Doctor")
+        public Repair SelectedRepair
         {
-            deviceService = service;            
+            get => Get<Repair>();
+            set => Set(value);
         }
 
-        protected override async Task OnLoad()
-        {            
-            var devices = await deviceService.GetDevices();
+        public ObservableCollection<Repair> Repairs { get; } = new();           
+        public ObservableCollection<RepairActionViewModel> RepairActions { get; } 
 
-            DeviceLists.Clear();
-            Enum.GetValues<Status>()
-                .ToList()
-                .ForEach(status =>
-                    DeviceLists.Add(new DeviceListViewModel(
-                        status.Description(),
-                        devices.Where(device => device.Status == status).ToList())));
+        public DeviceDoctorViewModel(RepairService service) : base("Device Doctor")
+        {
+            repairService = service;
+            RepairActions = new()
+            {
+                new RepairActionViewModel(RepairAction.RegisterNewRepair, () => Task.CompletedTask)
+            };
+        }
+
+        public override async Task OnLoad()
+        {
+            Repairs.Clear();
+            (await repairService.GetRepairs()).ForEach(Repairs.Add);
         }
     }
 }

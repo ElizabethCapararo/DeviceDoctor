@@ -5,7 +5,7 @@ namespace DeviceDoctorTerminalSystem.Utilities
     public static class EnumHelper
     {
         public static string Description<T>(this T value) where T : Enum =>
-            value.GetAttribute<T, DescriptionAttribute>()?.Description ??
+            value?.GetAttribute<T, DescriptionAttribute>()?.Description ??
                 value?.ToString() ??
                 string.Empty;
 

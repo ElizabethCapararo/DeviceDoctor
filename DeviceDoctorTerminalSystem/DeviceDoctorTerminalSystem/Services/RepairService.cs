@@ -3,28 +3,25 @@ using DeviceDoctorTerminalSystem.Models;
 
 namespace DeviceDoctorTerminalSystem.Services
 {
-    public class DeviceService
+    public class RepairService
     {
         private readonly IDocDbContext context;
 
-        public DeviceService(IDocDbContext dbContext)
+        public RepairService(IDocDbContext dbContext)
         {
             context = dbContext;
         }
 
-        public async Task<List<Device>> GetDevices()
+        public async Task<List<Repair>> GetRepairs()
         {
             await Task.CompletedTask;
 
-            return new List<Device>()
+            return new List<Repair>()
             {
-                Device.Create(
+                Repair.Create(
                     Customer.Create("David", "Emery", "0425791172"),
-                    "XYZ192M1234",
-                    "S4",
-                    "Samsung",
-                    "Black screen, no signs of life",
-                    "Cracked screen")
+                    Device.Create("XYZ192M1234", "S4", "Samsung", "Cracked screen"),
+                    "Black screen, no signs of life")
             };
         }
     }
