@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using PointOfSaleTerminalSystem;
 using DeviceDoctorTerminalSystem.ViewModels;
+using DeviceDoctorTerminalSystem.Database;
+using DeviceDoctorTerminalSystem.Services;
 
 namespace DeviceDoctorTerminalSystem.Utilities
 {
@@ -21,6 +23,9 @@ namespace DeviceDoctorTerminalSystem.Utilities
 
         private static void ConfigureServices(this IServiceCollection services)
         {
+            services.AddDbContext<IDocDbContext, DocDbContext>();
+
+            services.AddSingleton<DeviceService>();
         }
 
         private static void ConfigureViewModels(this IServiceCollection services)
