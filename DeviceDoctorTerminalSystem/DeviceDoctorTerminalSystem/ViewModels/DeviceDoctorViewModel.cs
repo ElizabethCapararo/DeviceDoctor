@@ -1,78 +1,87 @@
 ﻿using DeviceDoctorTerminalSystem.Enumerations;
-using DeviceDoctorTerminalSystem.Models;
 using DeviceDoctorTerminalSystem.Services;
 using PointOfSaleTerminalSystem.ViewModels;
 using System.Collections.ObjectModel;
 
 namespace DeviceDoctorTerminalSystem.ViewModels
 {
-    public class DeviceDoctorViewModel : ViewModelBase
+    public class DeviceDoctorViewModel : BaseViewModel
     {
-        private readonly RepairService repairService;
+        private readonly RepairService _repairService;
 
-        public bool CanUpdateRepair => SelectedRepair != null;
+        public ObservableCollection<RepairActionViewModel> RepairActions { get; }
 
-        public Repair SelectedRepair
+        public RepairViewModel SelectedRepair
         {
-            get => Get<Repair>();
+            get => Get<RepairViewModel>();
             set
             {
                 Set(value);
-                NotifyChanged(nameof(CanUpdateRepair));
+                if (SelectedRepair == null)
+                {
+                    return;
+                }
+                Load();
             }
         }
 
-        public ObservableCollection<Repair> Repairs { get; } = new();               
-        public ObservableCollection<RepairActionViewModel> RepairActions { get; } 
-
+        public ObservableCollection<RepairViewModel> Repairs { get; } = new();               
+       
         public DeviceDoctorViewModel(RepairService repairService) : base("Device Doctor")
         {
-            this.repairService = repairService;
+            _repairService = repairService;
+
             RepairActions = new()
             {
                 new RepairActionViewModel(RepairAction.RegisterNewRepair, RegisterNewRepair),
                 new RepairActionViewModel(RepairAction.CancelRepair, CancelRepair),
                 new RepairActionViewModel(RepairAction.SaveChangesToRepair, UpdateRepair),
                 new RepairActionViewModel(RepairAction.DeleteRepair, DeleteRepair),
-                new RepairActionViewModel(RepairAction.CompleteRepair, CompleteRepair)                              
+                new RepairActionViewModel(RepairAction.CompleteRepair, CompleteRepair)
             };
         }
 
-        public override Task OnLoad()
+        public override void Load()
         {
-            RefreshRepairs();
-            return Task.CompletedTask;
+            LoadRepairs();
+            RepairActions.ToList().ForEach(vm => vm.Load());
         }
 
-        private void RefreshRepairs()
+        private void LoadRepairs()
         {
             Repairs.Clear();
-            repairService.GetRepairs().ForEach(Repairs.Add);
+            _repairService.GetRepairs().ForEach(repair => Repairs.Add(new RepairViewModel(repair)));
         }
 
         private void RegisterNewRepair()
         {
-            SelectedRepair = Repair.Create();
+            SelectedRepair = new();
         }
 
-        private void UpdateRepair()
+        private async void UpdateRepair()
         {
-            repairService.UpdateRepair(SelectedRepair);
-            RefreshRepairs();
+            SelectedRepair.Update();
+            await _repairService.UpdateRepair(SelectedRepair.Repair);
+            Load();
         }
 
         private async void CompleteRepair()
         {
-            await repairService.CompleteRepair(SelectedRepair);
-            RefreshRepairs();
+            SelectedRepair.Complete();
+            await _repairService.UpdateRepair(SelectedRepair.Repair);
+            Load();
         }
-        private void CancelRepair() => 
-            SelectedRepair = Repair.Create();
-        
-        private void DeleteRepair()
+        private async void CancelRepair()
         {
-            repairService.DeleteRepair(SelectedRepair);
-            RefreshRepairs();
+            SelectedRepair.Cancel();
+            await _repairService.UpdateRepair(SelectedRepair.Repair);
+            Load();
+        }
+        
+        private async void DeleteRepair()
+        {
+            await _repairService.DeleteRepair(SelectedRepair.Repair);
+            Load();
         }
     }
 }

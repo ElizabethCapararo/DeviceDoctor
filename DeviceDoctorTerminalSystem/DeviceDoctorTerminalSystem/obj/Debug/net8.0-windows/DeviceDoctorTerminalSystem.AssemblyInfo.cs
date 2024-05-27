@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DeviceDoctorTerminalSystem")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+784a853d9dcc53aec543d4fe8a564e3f49f08d57")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+965cf1d95713abbdc8e1a55dd81b5f79fcdbe9f8")]
 [assembly: System.Reflection.AssemblyProductAttribute("DeviceDoctorTerminalSystem")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DeviceDoctorTerminalSystem")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

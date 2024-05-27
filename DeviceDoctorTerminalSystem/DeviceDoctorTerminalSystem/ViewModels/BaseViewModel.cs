@@ -1,5 +1,4 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Input;
+﻿using Microsoft.Toolkit.Mvvm.Input;
 using System.Collections;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -7,19 +6,19 @@ using System.Windows.Input;
 
 namespace PointOfSaleTerminalSystem.ViewModels
 {
-    public abstract class ViewModelBase :INotifyDataErrorInfo, INotifyPropertyChanged
+    public abstract class BaseViewModel : INotifyDataErrorInfo, INotifyPropertyChanged
     {
         public string Title { get; }
 
         public ICommand LoadCommand { get; }        
 
-        public ViewModelBase(string title)
+        public BaseViewModel(string title = "")
         {
             Title = title;
-            LoadCommand = new AsyncRelayCommand(OnLoad);
+            LoadCommand = new RelayCommand(Load);
         }        
 
-        public virtual Task OnLoad() => Task.CompletedTask;
+        public virtual void Load() { }
 
         // INotifyDataErrorInfo Logic
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;

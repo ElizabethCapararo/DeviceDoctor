@@ -5,34 +5,27 @@ namespace DeviceDoctorTerminalSystem.Services
 {
     public class RepairService
     {
-        private readonly IDocDbContext context;
+        private readonly IDocDbContext _context;
 
         public RepairService(IDocDbContext dbContext)
         {
-            context = dbContext;
+            _context = dbContext;
         }
 
-        public List<Repair> GetRepairs() => context.All<Repair>().ToList();
-
-        public async Task CompleteRepair(Repair repair) => 
-            await context.UpdateDatabase(() => context.Get<Repair>(r => r.Id == repair.Id).Complete());
-
+        public List<Repair> GetRepairs() => _context.All<Repair>().ToList();
+      
         public async Task DeleteRepair(Repair repair) => 
-            await context.UpdateDatabase(() => context.Remove(repair));
+            await _context.UpdateDatabase(() => _context.Remove(repair));
 
-        public async void UpdateRepair(Repair repair)
+        public async Task UpdateRepair(Repair repair)
         {
-            await context.UpdateDatabase(() =>
+            await _context.UpdateDatabase(() =>
             {
-                var existingRepair = context.Get<Repair>(r => r.Id == repair.Id);
-                if (existingRepair == null)
+                if (_context.Get<Repair>(r => r.Id == repair.Id) != null)
                 {
-                    context.Add(repair);
+                    return;
                 }
-                else
-                {
-                    repair.UpdateLog("Repair details updated");
-                }
+                _context.Add(repair);
             });
         }        
     }

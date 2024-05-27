@@ -1,6 +1,5 @@
 ﻿using DeviceDoctorTerminalSystem.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace DeviceDoctorTerminalSystem.Database
 {
@@ -8,13 +7,13 @@ namespace DeviceDoctorTerminalSystem.Database
     {
         DbSet<Repair> Repairs { get; set; }
 
-        public IEnumerable<T> All<T>() where T : class => Set<T>().AsQueryable();
+        IEnumerable<T> IDocDbContext.All<T>() where T : class => Set<T>().AsQueryable();
 
-        public T Get<T>(Func<T, bool> condition) where T : class => Set<T>().FirstOrDefault(condition);
+        T? IDocDbContext.Get<T>(Func<T, bool> condition) where T : class => Set<T>().FirstOrDefault(condition);
 
-        public void Remove<T>(T entity) where T : class => Set<T>().Remove(entity);
+        void IDocDbContext.Remove<T>(T entity) => Set<T>().Remove(entity);
 
-        public void Add<T>(T entity) where T : class => Set<T>().Add(entity);
+        void IDocDbContext.Add<T>(T entity) where T : class => Set<T>().Add(entity);
 
         public async Task UpdateDatabase(Action performAction)
         {

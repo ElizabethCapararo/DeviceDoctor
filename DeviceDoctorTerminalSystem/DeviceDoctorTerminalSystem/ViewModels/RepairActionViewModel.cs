@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace DeviceDoctorTerminalSystem.ViewModels
 {
-    public class RepairActionViewModel : ViewModelBase
+    public class RepairActionViewModel : BaseViewModel
     {
         public ICommand ActionCommand { get; init; }
 
